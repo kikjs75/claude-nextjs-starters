@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Settings } from "lucide-react"
+import { LayoutDashboard, Settings } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator"
 
 const iconMap: Record<string, React.ElementType> = {
   "/dashboard": LayoutDashboard,
-  "/dashboard/users": Users,
   "/dashboard/settings": Settings,
 }
 

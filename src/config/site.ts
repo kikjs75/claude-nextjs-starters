@@ -23,7 +23,6 @@ export const siteConfig: SiteConfig = {
   ],
   dashboardNav: [
     { title: "대시보드", href: "/dashboard" },
-    { title: "사용자", href: "/dashboard/users" },
     { title: "설정", href: "/dashboard/settings" },
   ],
   footerNav: [
