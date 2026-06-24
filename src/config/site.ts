@@ -19,6 +19,8 @@ export const siteConfig: SiteConfig = {
   url: "https://nextstarter.dev",
   nav: [
     { title: "홈", href: "/" },
+    { title: "예제", href: "/examples" },
+    { title: "문서", href: "/docs" },
     { title: "대시보드", href: "/dashboard" },
   ],
   dashboardNav: [
