@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+hook-test.txt
 
 # playwright mcp (claude code 자동 생성 임시 파일)
 .playwright-mcp/
