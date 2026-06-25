@@ -7,28 +7,39 @@ fi
 
 EVENT_TYPE="${1:-stop}"
 
+# stdin에서 훅 JSON 데이터 읽기
+HOOK_DATA=$(cat)
+
+# cwd에서 프로젝트명 추출
+CWD=$(echo "$HOOK_DATA" | jq -r '.cwd // empty' 2>/dev/null)
+PROJECT_NAME=$(basename "${CWD:-$PWD}")
+TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
+
 if [ "$EVENT_TYPE" = "permission" ]; then
-  # stdin에서 훅 JSON 데이터 읽기
-  HOOK_DATA=$(cat)
-
-  # python3으로 message 파싱
-  PERMISSION_MSG=$(echo "$HOOK_DATA" | python3 -c "
-import sys, json
-try:
-    data = json.load(sys.stdin)
-    print(data.get('message', '알 수 없는 요청'))
-except Exception:
-    print('알 수 없는 요청')
-")
-
-  MESSAGE=":warning: *Claude Code 권한 요청*\n${PERMISSION_MSG}\n모바일에서 승인해주세요."
+  STATUS=$(echo "$HOOK_DATA" | jq -r '.message // ""' 2>/dev/null)
+  TITLE="🔔 권한 요청 알림"
+  FOOTER="Claude Code에서 알림이 도착했습니다."
 else
-  MESSAGE=":white_check_mark: *Claude Code 작업 완료*\n작업이 끝났습니다."
+  STATUS=""
+  TITLE="🔔 작업 완료 알림"
+  FOOTER="Claude Code 작업이 완료되었습니다."
 fi
+
+PAYLOAD=$(jq -n \
+  --arg title "$TITLE" \
+  --arg project "$PROJECT_NAME" \
+  --arg status "$STATUS" \
+  --arg time "$TIMESTAMP" \
+  --arg footer "$FOOTER" \
+  '{
+    username: "Claude Code",
+    icon_emoji: ":bell:",
+    text: "\($title)\n\n프로젝트: `\($project)`\n상태: \($status)\n시간: \($time)\n\n\($footer)"
+  }')
 
 curl -s -X POST \
   -H 'Content-type: application/json' \
-  --data "{\"text\":\"${MESSAGE}\"}" \
+  --data "$PAYLOAD" \
   "$SLACK_WEBHOOK_URL" \
   > /dev/null 2>&1
 
